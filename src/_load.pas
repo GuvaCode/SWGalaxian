@@ -223,6 +223,11 @@ begin
   if IsTextureValid(blast) then UnloadTexture(blast);
   if IsTextureValid(expl) then UnloadTexture(expl);
 
+
+   MusicInitialized := False;
+  StopMusicStream(MenuMusic);
+  StopMusicStream(IntroMusic);
+
   // Выгрузка звуков
   for i := 0 to Max_Sounds do
   begin
@@ -260,9 +265,7 @@ begin
 
   // Сброс состояния музыки
 
-  MusicInitialized := False;
-  StopMusicStream(MenuMusic);
-  StopMusicStream(IntroMusic);
+
 
 
 end;
