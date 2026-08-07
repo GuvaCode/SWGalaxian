@@ -50,7 +50,7 @@ For every **70,000 points**, a random power-up spawns on the battlefield. There 
 
 ![Screenshot](https://img.itch.zone/aW1nLzI5MTIwNTYwLnBuZw==/original/vKP9BB.png)
 
-***Have fun playing, and may the Force be with you! :)** *
+**Have fun playing, and may the Force be with you! :)**
 
 ---
 
