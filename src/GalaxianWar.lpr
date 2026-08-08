@@ -304,9 +304,9 @@ var
 
 begin
   // Инициализация окна
- // SetConfigFlags(FLAG_VSYNC_HINT or FLAG_WINDOW_HIGHDPI);
+  SetConfigFlags(FLAG_VSYNC_HINT);
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, 'SWGalaxian');
-  SetTargetFps(60);
+ // SetTargetFps(60);
 
 
   Icn := LoadImage('data/art.png');
@@ -357,7 +357,9 @@ begin
        // Обновляем текущую музыку
    if MusicInitialized then
       UpdateMusicStream(CurrentMusic);
-    UpdateCamera(@camera, CAMERA_CUSTOM);
+
+    if GameState = gsIntro_text then
+       UpdateCamera(@camera, CAMERA_CUSTOM);
 
    //Накапливаем время для логики
     acc := acc + dt;
