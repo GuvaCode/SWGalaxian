@@ -306,7 +306,7 @@ begin
   // Инициализация окна
   SetConfigFlags(FLAG_VSYNC_HINT);
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, 'SWGalaxian');
-  SetTargetFps(60);
+ // SetTargetFps(60);
 
 
   Icn := LoadImage('data/art.png');
@@ -378,6 +378,7 @@ begin
       acc := 0.0;
 
     //Рендер каждый кадр
+    DrawFPS(10,10);
     Render;
   end;
 
