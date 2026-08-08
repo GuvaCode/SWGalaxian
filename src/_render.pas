@@ -608,7 +608,9 @@ begin
   if pause then
   begin
     s := 'PAUSE';
-    DrawText(PChar(s), 400 - MeasureText(PChar(s), 16) div 2, 250, 16, ColorCreate(255, 255, 255, 255));
+    ms := MeasureTextEx( fnt1, PAnsiChar(s), 48, 1);
+    //DrawText(PChar(s), 400 - MeasureText(PChar(s), 10) div 2, 250, 10, ColorCreate(255, 255, 255, 255));
+    DrawTextEx(fnt1, PAnsiChar(s), Vector2Create(400 - (ms.x/2), 250 - 48/2) , 48, 1,  ColorCreate(236, 199, 96, 255));
   end;
 
   // GAME OVER

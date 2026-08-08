@@ -196,7 +196,7 @@ begin
   if not IsAudioDeviceReady() then
     Exit;
 
-  // Если ваш binding поддерживает IsSoundReady, можно добавить:
+
    if not IsSoundValid(s[id]) then Exit;
 
   PlaySound(s[id]);

@@ -1,4 +1,4 @@
-# Star Wars: TIE Fighter Assault
+# Star Wars: Galaxian
 
 **Port Description:**  
 Originally developed by Alexandr "Shirson" Nevskiy using the exEngine, this project is a port to FPC and raylib. V-Sync now works flawlessly.
@@ -51,6 +51,12 @@ For every **70,000 points**, a random power-up spawns on the battlefield. There 
 ![Screenshot](https://img.itch.zone/aW1nLzI5MTIwNTYwLnBuZw==/original/vKP9BB.png)
 
 **Have fun playing, and may the Force be with you! :)**
+
+---
+## Download 
+
+<iframe width="552" height="167" frameborder="0" src="https://itch.io/embed/4873140"><a href="https://guvacode.itch.io/swgalaxian">Star Wars Galaxian by Guvacode</a></iframe>
+
 
 ---
 

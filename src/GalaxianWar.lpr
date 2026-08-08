@@ -26,7 +26,7 @@ var
   IntroBottomSideRecWidth, IntroRightSideRecHeight: Integer;
   IntroState: Integer;
   IntroAlpha: Single;
-
+  IntroTimer: Single;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 // Процедура отрисовки и логики заставки
@@ -34,6 +34,8 @@ procedure PlayIntro();
 var
   FadeFactor: Single;
   bgColor: TColor;
+  DeltaTime: Single;
+  AnimationSpeed: Single;
 begin
   // Инициализация переменных интро
   IntroLogoPositionX := GetScreenWidth div 2 - 128;
@@ -46,46 +48,73 @@ begin
   IntroRightSideRecHeight := 16;
   IntroState := 0;
   IntroAlpha := 1.0;
+  IntroTimer := 0.0; // Таймер для паузы в состоянии 0
 
   FadeFactor := 1.0; // 1.0 = Белый (RAYWHITE), 0.0 = Черный (BLACK)
 
   // Цикл интро
   while not WindowShouldClose() do
   begin
+    // Получаем время между кадрами
+    DeltaTime := GetFrameTime();
+
+    // Базовая скорость анимации (при 60 FPS будет давать такие же значения как раньше)
+    AnimationSpeed := 1.0;
+
     // --- UPDATE INTRO ---
     if IntroState = 0 then
     begin
-      Inc(IntroFramesCounter);
-      if IntroFramesCounter = 120 then
+      // Используем таймер вместо счетчика кадров
+      IntroTimer := IntroTimer + DeltaTime;
+      if IntroTimer >= 2.0 then // 2 секунды (было 120 кадров при 60 FPS)
       begin
         IntroState := 1;
-        IntroFramesCounter := 0;
+        IntroTimer := 0.0;
       end;
     end
     else if IntroState = 1 then
     begin
-      Inc(IntroTopSideRecWidth, 4);
-      Inc(IntroLeftSideRecHeight, 4);
-      if IntroTopSideRecWidth = 256 then IntroState := 2;
+      // Рост со скоростью ~240 пикселей в секунду (было 4 пикселя за кадр при 60 FPS)
+      IntroTopSideRecWidth := IntroTopSideRecWidth + Round(240.0 * DeltaTime);
+      IntroLeftSideRecHeight := IntroLeftSideRecHeight + Round(240.0 * DeltaTime);
+
+      if IntroTopSideRecWidth >= 256 then
+      begin
+        IntroTopSideRecWidth := 256;
+        IntroLeftSideRecHeight := 256;
+        IntroState := 2;
+      end;
     end
     else if IntroState = 2 then
     begin
-      Inc(IntroBottomSideRecWidth, 4);
-      Inc(IntroRightSideRecHeight, 4);
-      if IntroBottomSideRecWidth = 256 then IntroState := 3;
+      // Рост со скоростью ~240 пикселей в секунду
+      IntroBottomSideRecWidth := IntroBottomSideRecWidth + Round(240.0 * DeltaTime);
+      IntroRightSideRecHeight := IntroRightSideRecHeight + Round(240.0 * DeltaTime);
+
+      if IntroBottomSideRecWidth >= 256 then
+      begin
+        IntroBottomSideRecWidth := 256;
+        IntroRightSideRecHeight := 256;
+        IntroState := 3;
+        IntroTimer := 0.0;
+      end;
     end
     else if IntroState = 3 then
     begin
-      Inc(IntroFramesCounter);
-      if IntroFramesCounter div 12 <> 0 then
+      // Появление букв с интервалом 0.2 секунды (было 12 кадров при 60 FPS)
+      IntroTimer := IntroTimer + DeltaTime;
+      if IntroTimer >= 0.2 then
       begin
-        Inc(IntroLettersCount);
-        IntroFramesCounter := 0;
+        if IntroLettersCount < 10 then
+          Inc(IntroLettersCount);
+        IntroTimer := 0.0;
       end;
 
+      // Когда все буквы появились, начинаем затухание
       if IntroLettersCount >= 10 then
       begin
-        IntroAlpha := IntroAlpha - 0.02;
+        // Затухание со скоростью 0.02 за кадр при 60 FPS = 1.2 в секунду
+        IntroAlpha := IntroAlpha - (1.2 * DeltaTime);
         if IntroAlpha <= 0.0 then
         begin
           IntroAlpha := 0.0;
@@ -96,7 +125,8 @@ begin
     else if IntroState = 4 then
     begin
       // Плавный переход фона от белого к черному
-      FadeFactor := FadeFactor - 0.02; // Скорость затемнения
+      // Скорость затемнения: 0.02 за кадр при 60 FPS = 1.2 в секунду
+      FadeFactor := FadeFactor - (1.2 * DeltaTime);
 
       if FadeFactor <= 0.0 then
       begin
@@ -106,11 +136,12 @@ begin
     end;
 
     // Возможность пропустить интро нажатием Space, Enter или кликом
-    if IsKeyPressed(KEY_SPACE) or IsKeyPressed(KEY_ENTER) or IsMouseButtonPressed(MOUSE_LEFT_BUTTON) then
+    if IsKeyPressed(KEY_SPACE) or IsKeyPressed(KEY_ENTER) or IsMouseButtonPressed(MOUSE_LEFT_BUTTON) or (GetGamepadButtonPressed > 0) then
     begin
       if IntroState < 4 then
         IntroState := 4; // Если скипнули до конца анимации, сразу начинаем затемнять фон
-      FadeFactor := FadeFactor - 0.05; // При скипе затемняем немного быстрее
+      // При скипе затемняем быстрее (скорость увеличивается в 3 раза)
+      FadeFactor := FadeFactor - (3.6 * DeltaTime);
     end;
 
     // --- DRAW INTRO ---
@@ -120,7 +151,7 @@ begin
     if IntroState = 4 then
     begin
       // RAYWHITE в Raylib это (245, 245, 245, 255).
-      // Мы используем 245, чтобы не было резкого скачка яркости при переходе.
+      // Используем 245, чтобы не было резкого скачка яркости при переходе.
       bgColor.r := Byte(Round(245.0 * FadeFactor));
       bgColor.g := Byte(Round(245.0 * FadeFactor));
       bgColor.b := Byte(Round(245.0 * FadeFactor));
@@ -137,7 +168,8 @@ begin
     begin
       if IntroState = 0 then
       begin
-        if (IntroFramesCounter div 15) mod 2 <> 0 then
+        // Мигание с периодом 0.5 секунды (было 15 кадров при 60 FPS)
+        if (Trunc(IntroTimer / 0.25) mod 2) = 0 then
           DrawRectangle(IntroLogoPositionX, IntroLogoPositionY, 16, 16, BLACK);
       end
       else if IntroState = 1 then
@@ -181,7 +213,7 @@ procedure PollKeyEvents;
 begin
   if IsKeyPressed(KEY_ENTER)  then Key_Ent_Pressed   := true;
   if IsKeyPressed(KEY_ESCAPE) then Key_ESC_Pressed   := true;
-  if IsKeyPressed(KEY_PAUSE)  then Key_PAUSE_Pressed := true;
+  if IsKeyPressed(KEY_PAUSE) or IsKeyPressed(KEY_P) then Key_PAUSE_Pressed := true;
 end;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -189,13 +221,13 @@ end;
 procedure ReadInput;
 begin
   input.Up    := IsKeyDown(KEY_UP);
-  input.Right := IsKeyDown(KEY_RIGHT);
+  input.Right := IsKeyDown(KEY_RIGHT) or IsKeyDown(KEY_D) or (GetGamepadAxisMovement(0,GAMEPAD_AXIS_LEFT_X) = 1.0);
   input.Down  := IsKeyDown(KEY_DOWN);
-  input.Left  := IsKeyDown(KEY_LEFT);
-  input.B1    := IsKeyDown(KEY_SPACE);
+  input.Left  := IsKeyDown(KEY_LEFT) or IsKeyDown(KEY_A) or (GetGamepadAxisMovement(0,GAMEPAD_AXIS_LEFT_X) = -1.0);
+  input.B1    := IsKeyDown(KEY_SPACE) or (GetGamepadButtonPressed = 6);
   input.B2    := IsKeyDown(KEY_LEFT_SHIFT) or IsKeyDown(KEY_RIGHT_SHIFT);
-  input.PAUSE := Key_PAUSE_Pressed;
-  input.Ent   := Key_Ent_Pressed;
+  input.PAUSE := Key_PAUSE_Pressed or (GetGamepadButtonPressed = 13);
+  input.Ent   := Key_Ent_Pressed or (GetGamepadButtonPressed = 15);
   input.ESC   := Key_ESC_Pressed;
 end;
 
@@ -272,12 +304,14 @@ var
 
 begin
   // Инициализация окна
-  SetConfigFlags(FLAG_VSYNC_HINT or FLAG_WINDOW_HIGHDPI);
+ // SetConfigFlags(FLAG_VSYNC_HINT or FLAG_WINDOW_HIGHDPI);
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, 'SWGalaxian');
+  SetTargetFps(60);
+
 
   Icn := LoadImage('data/art.png');
   SetWindowIcons(@Icn,1);
-
+ // UnloadImage(Icn);
   // Инициализация аудио
   InitAudioDevice();
 
@@ -307,9 +341,9 @@ begin
 
   acc := 0.0;
 
-  PlayIntro();
+ // PlayIntro();
 
-
+  SetExitKey(KEY_NULL);  // Отключаем выход по ESC
   while not WindowShouldClose() do
   begin
   //  if IsKeyPressed(KEY_P) then takeScreenShot(PAnsiChar('sc' + Inttostr(random(9999)) +'.png' ));
