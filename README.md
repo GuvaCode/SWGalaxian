@@ -55,7 +55,8 @@ For every **70,000 points**, a random power-up spawns on the battlefield. There 
 ---
 ## Download 
 
-<iframe width="552" height="167" frameborder="0" src="https://itch.io/embed/4873140"><a href="https://guvacode.itch.io/swgalaxian">Star Wars Galaxian by Guvacode</a></iframe>
+[![Binary Download](https://static.itch.io/images/badge.svg)](https://guvacode.itch.io/swgalaxian)  
+*Binary Download*
 
 
 ---
