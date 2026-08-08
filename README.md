@@ -55,7 +55,7 @@ For every **70,000 points**, a random power-up spawns on the battlefield. There 
 ---
 ## Download 
 
-[![Binary Download](https://static.itch.io/images/badge.svg)](https://guvacode.itch.io/swgalaxian)  
+[![Binary Download](/bin/data/badge-color.png)](https://guvacode.itch.io/swgalaxian)  
 *Binary Download*
 
 
