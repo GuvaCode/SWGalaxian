@@ -304,8 +304,9 @@ var
 
 begin
   // Инициализация окна
-  SetConfigFlags(FLAG_VSYNC_HINT);
+
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, 'SWGalaxian');
+  SetConfigFlags(FLAG_VSYNC_HINT);
  // SetTargetFps(60);
 
 
